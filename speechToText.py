@@ -16,8 +16,6 @@ def speak_text(text):
 
 # Function to listen to the microphone with key binding
 def listen_untill_release():
-    print("Speak now. Press and hold 'Enter' to record, release to stop.")
-
     audio_data = bytearray()  # Store raw audio data here
 
     with sr.Microphone() as source:
@@ -40,17 +38,16 @@ def listen_untill_release():
         text = recognizer.recognize_google(combined_audio)
         print("Recognition complete.")
     except sr.UnknownValueError:
-        print("Could not understand audio")
         text = None
     except sr.RequestError as e:
-        print(f"Error: {e}")
-        text = ""
+        text = None
 
     return text
 
 
 # Main loop
 if __name__ == '__main__':
+    print("Press and hold 'Enter' to start, release to stop.")
     while True:
         if keyboard.is_pressed('enter'):
             listened_text = listen_untill_release()
