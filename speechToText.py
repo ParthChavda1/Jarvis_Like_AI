@@ -1,8 +1,8 @@
 import speech_recognition as sr
 import pyttsx3
 import keyboard
-# import sys
-# import time
+import sys
+
 
 # Initialize the recognizer
 recognizer = sr.Recognizer()
@@ -22,6 +22,7 @@ def listen_untill_release()->str:
         recognizer.adjust_for_ambient_noise(source)
         print("Listening....!")
         while keyboard.is_pressed('enter'):
+            sys.stdin.flush()
             try:
                 audio = recognizer.record(source,duration=1)
                 audio_data.extend(audio.get_raw_data())  # Add raw audio data to the bytearray
@@ -50,6 +51,7 @@ if __name__ == '__main__':
     print("Press and hold 'Enter' to start, release to stop.")
     while True:
         if keyboard.is_pressed('enter'):
+            sys.stdin.flush()
             listened_text = listen_untill_release()
 
             # Bad text handling
@@ -62,9 +64,7 @@ if __name__ == '__main__':
 
             # handling exit call
             if(not(listened_text.find('exit') == -1)):
-                print("Exitting the look\nHAVE A GREAT DAY !")
+                print("Exitting the loop\nHAVE A GREAT DAY !")
                 break
 
             print("Done!")
-    # Flushing all the enters registerd while speaking
-    # sys.stdin.flush()
