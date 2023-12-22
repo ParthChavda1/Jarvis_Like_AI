@@ -1,7 +1,7 @@
 import speech_recognition as sr
 import pyttsx3
 import keyboard
-
+import sys
 import time
 
 # Initialize the recognizer
@@ -9,18 +9,18 @@ recognizer = sr.Recognizer()
 recognizer.energy_threshold = 300
 
 # text to audio ==>
-def speak_text(text):
+def speak_text(text)->None:
     engine = pyttsx3.init()
     engine.say(text)
     engine.runAndWait()
 
 # Function to listen to the microphone with key binding
-def listen_untill_release():
+def listen_untill_release()->str:
     audio_data = bytearray()  # Store raw audio data here
 
     with sr.Microphone() as source:
         recognizer.adjust_for_ambient_noise(source)
-        
+        print("Listening....!")
         while keyboard.is_pressed('enter'):
             try:
                 audio = recognizer.record(source,duration=1)
@@ -51,8 +51,20 @@ if __name__ == '__main__':
     while True:
         if keyboard.is_pressed('enter'):
             listened_text = listen_untill_release()
+
+            # Bad text handling
             if(not listened_text):
                 print("Please speak again")
                 continue
+
             print(listened_text)
             speak_text(listened_text)
+
+            # handling exit call
+            if(not(listened_text.find('exit') == -1)):
+                print("Exitting the look\nHAVE A GREAT DAY !")
+                break
+
+            print("Done!")
+    # Flushing all the enters registerd while speaking
+    sys.stdin.flush()
