@@ -1,8 +1,8 @@
 import speech_recognition as sr
 import pyttsx3
 import keyboard
-import sys
-import time
+# import sys
+# import time
 
 # Initialize the recognizer
 recognizer = sr.Recognizer()
@@ -67,4 +67,4 @@ if __name__ == '__main__':
 
             print("Done!")
     # Flushing all the enters registerd while speaking
-    sys.stdin.flush()
+    # sys.stdin.flush()
