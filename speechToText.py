@@ -8,31 +8,37 @@ import sys
 recognizer = sr.Recognizer()
 recognizer.energy_threshold = 300
 
+
 # text to audio ==>
-def speak_text(text)->None:
+def speak_text(text) -> None:
     engine = pyttsx3.init()
     engine.say(text)
     engine.runAndWait()
 
+
 # Function to listen to the microphone with key binding
-def listen_untill_release()->str:
+def listen_untill_release() -> str:
     audio_data = bytearray()  # Store raw audio data here
 
     with sr.Microphone() as source:
         recognizer.adjust_for_ambient_noise(source)
         print("Listening....!")
-        while keyboard.is_pressed('enter'):
+        while keyboard.is_pressed("space"):
             sys.stdin.flush()
             try:
-                audio = recognizer.record(source,duration=1)
-                audio_data.extend(audio.get_raw_data())  # Add raw audio data to the bytearray
+                audio = recognizer.record(source, duration=1)
+                audio_data.extend(
+                    audio.get_raw_data()
+                )  # Add raw audio data to the bytearray
             except sr.UnknownValueError:
                 print("Could not understand audio")
             except sr.RequestError as e:
                 print(f"Error: {e}")
         print("Got out of the listening Phase, Now converting")
     # Create an AudioData object from the concatenated raw audio data
-    combined_audio = sr.AudioData(bytes(audio_data), source.SAMPLE_RATE, source.SAMPLE_WIDTH)
+    combined_audio = sr.AudioData(
+        bytes(audio_data), source.SAMPLE_RATE, source.SAMPLE_WIDTH
+    )
 
     # Perform recognition on the combined audio
     try:
@@ -47,24 +53,28 @@ def listen_untill_release()->str:
 
 
 # Main loop
-if __name__ == '__main__':
-    print("Press and hold 'Enter' to start, release to stop.")
+if __name__ == "__main__":
+    print("Press and hold 'Space' to start, release to stop.")
     while True:
-        if keyboard.is_pressed('enter'):
+        if keyboard.is_pressed("space"):
+            # flush the buffer
             sys.stdin.flush()
+
+            # listen to the audio
             listened_text = listen_untill_release()
 
             # Bad text handling
-            if(not listened_text):
+            if not listened_text:
                 print("Please speak again")
                 continue
 
-            print(listened_text)
+            # print the text
+            print(f"text: {listened_text}")
+            print("Generating response...")
             speak_text(listened_text)
 
             # handling exit call
-            if(not(listened_text.find('exit') == -1)):
-                print("Exitting the loop\nHAVE A GREAT DAY !")
+            if not (listened_text.find("exit") == -1):
                 break
 
             print("Done!")
