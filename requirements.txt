@@ -2,3 +2,6 @@ pyttsx3
 keyboard
 SpeechRecognition
 pyaudio
+langchain 
+langchain-ollama 
+ollama

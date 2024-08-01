@@ -2,11 +2,41 @@ import speech_recognition as sr
 import pyttsx3
 import keyboard
 import sys
+from langchain_ollama import OllamaLLM
+from langchain_core.prompts import ChatPromptTemplate
+
+template = """
+    Answer the question below
+
+    Here is conversation history : {context}
+
+    Question = {question}
+
+
+    Answer:
+"""
+
+model = OllamaLLM(model="llama3:8b")
+prompt = ChatPromptTemplate.from_template(template= template)
+chain = prompt | model
+
 
 
 # Initialize the recognizer
 recognizer = sr.Recognizer()
 recognizer.energy_threshold = 300
+
+cxt = ""
+# generate reply from llm model
+def generate_text(listened_text):
+    global cxt
+    input_data = {
+        "context": cxt,
+        "question": listened_text
+    }
+    result = chain.invoke(input = input_data)
+    cxt += f"/nUser: {listened_text}/n AI:{result}"
+    return result
 
 
 # text to audio ==>
@@ -70,11 +100,14 @@ if __name__ == "__main__":
 
             # print the text
             print(f"text: {listened_text}")
-            print("Generating response...")
-            speak_text(listened_text)
-
-            # handling exit call
             if not (listened_text.find("exit") == -1):
                 break
+            print("Generating response...")
+            result = generate_text(listened_text)
+            print(f"text: {result}")
+
+            speak_text(result)
+
+            
 
             print("Done!")
